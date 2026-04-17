@@ -1,40 +1,36 @@
-import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import React, { useState } from "react";
 import ProductList from "./components/ProductList";
-import CartItem from "./components/CartItem";
 import AboutUs from "./components/AboutUs";
+import CartItem from "./components/CartItem";
 import "./App.css";
 
-function App() {
+const App = () => {
+  const [showProducts, setShowProducts] = useState(false);
+
+  // REQUIRED FUNCTION (as per feedback)
+  const handleGetStartedClick = () => {
+    setShowProducts(true);
+  };
+
   return (
-    <BrowserRouter>
-      <Routes>
+    <div>
 
-        {/* Landing Page */}
-        <Route
-          path="/"
-          element={
-            <div className="landing-page">
-              <h1>Paradise Nursery</h1>
-              <Link to="/products">
-                <button>Get Started</button>
-              </Link>
-            </div>
-          }
-        />
+      {/* LANDING PAGE */}
+      {!showProducts ? (
+        <div className="landing-page">
+          <h1>Paradise Nursery</h1>
 
-        {/* Products */}
-        <Route path="/products" element={<ProductList />} />
+          {/* REQUIRED BUTTON WITH onClick */}
+          <button onClick={handleGetStartedClick}>
+            Get Started
+          </button>
+        </div>
+      ) : (
+        <ProductList />
+      )}
 
-        {/* Cart */}
-        <Route path="/cart" element={<CartItem />} />
-
-        {/* About */}
-        <Route path="/about" element={<AboutUs />} />
-
-      </Routes>
-    </BrowserRouter>
+    </div>
   );
-}
+};
 
 export default App;
