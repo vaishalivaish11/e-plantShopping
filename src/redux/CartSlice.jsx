@@ -8,36 +8,48 @@ const CartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
-    addToCart: (state, action) => {
-      const item = state.cartItems.find(i => i.id === action.payload.id);
+
+    // ✅ REQUIRED: addItem()
+    addItem: (state, action) => {
+      const item = state.cartItems.find(
+        (i) => i.id === action.payload.id
+      );
+
       if (item) {
         item.quantity += 1;
       } else {
-        state.cartItems.push({ ...action.payload, quantity: 1 });
+        state.cartItems.push({
+          ...action.payload,
+          quantity: 1
+        });
       }
     },
 
-    removeFromCart: (state, action) => {
-      state.cartItems = state.cartItems.filter(i => i.id !== action.payload);
+    // ✅ REQUIRED: removeItem()
+    removeItem: (state, action) => {
+      state.cartItems = state.cartItems.filter(
+        (item) => item.id !== action.payload
+      );
     },
 
-    increaseQty: (state, action) => {
-      const item = state.cartItems.find(i => i.id === action.payload);
-      if (item) item.quantity += 1;
-    },
+    // ✅ REQUIRED: updateQuantity()
+    updateQuantity: (state, action) => {
+      const { id, type } = action.payload;
 
-    decreaseQty: (state, action) => {
-      const item = state.cartItems.find(i => i.id === action.payload);
-      if (item && item.quantity > 1) item.quantity -= 1;
+      const item = state.cartItems.find((i) => i.id === id);
+
+      if (item) {
+        if (type === "increase") {
+          item.quantity += 1;
+        } else if (type === "decrease" && item.quantity > 1) {
+          item.quantity -= 1;
+        }
+      }
     }
   }
 });
 
-export const {
-  addToCart,
-  removeFromCart,
-  increaseQty,
-  decreaseQty
-} = CartSlice.actions;
+export const { addItem, removeItem, updateQuantity } =
+  CartSlice.actions;
 
 export default CartSlice.reducer;
