@@ -1,50 +1,117 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-  increaseQty,
-  decreaseQty,
-  removeFromCart
+  removeItem,
+  updateQuantity
 } from "../redux/CartSlice";
 import { Link } from "react-router-dom";
 
 const CartItem = () => {
-  const cart = useSelector(state => state.cart.cartItems);
+  const cartItems = useSelector((state) => state.cart.cartItems);
   const dispatch = useDispatch();
 
-  const totalAmount = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  // ✅ TOTAL CART AMOUNT (REQUIRED)
+  const calculateTotalAmount = () => {
+    return cartItems.reduce((total, item) => {
+      return total + item.price * item.quantity;
+    }, 0);
+  };
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
+
       <h1>Shopping Cart</h1>
 
-      {/* Cart Items */}
-      {cart.map(item => (
-        <div key={item.id} style={{ border: "1px solid black", margin: "10px" }}>
-          <h3>{item.name}</h3>
-          <p>Price: ₹{item.price}</p>
-          <p>Quantity: {item.quantity}</p>
-          <p>Total: ₹{item.price * item.quantity}</p>
+      {/* If cart empty */}
+      {cartItems.length === 0 ? (
+        <h3>Your cart is empty</h3>
+      ) : (
+        cartItems.map((item) => (
+          <div
+            key={item.id}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "15px",
+              border: "1px solid #ddd",
+              padding: "10px",
+              marginBottom: "10px"
+            }}
+          >
 
-          <button onClick={() => dispatch(increaseQty(item.id))}>+</button>
-          <button onClick={() => dispatch(decreaseQty(item.id))}>-</button>
-          <button onClick={() => dispatch(removeFromCart(item.id))}>
-            Delete
-          </button>
-        </div>
-      ))}
+            {/* IMAGE (REQUIRED) */}
+            <img
+              src={item.image}
+              alt={item.name}
+              width="100"
+              height="80"
+              style={{ borderRadius: "8px" }}
+            />
 
-      {/* Total */}
-      <h2>Total Amount: ₹{totalAmount}</h2>
+            {/* NAME */}
+            <h3>{item.name}</h3>
 
-      {/* Buttons */}
-      <button onClick={() => alert("Coming Soon")}>Checkout</button>
+            {/* PRICE */}
+            <p>Price: ₹{item.price}</p>
+
+            {/* QUANTITY */}
+            <div>
+              <button
+                onClick={() =>
+                  dispatch(
+                    updateQuantity({ id: item.id, type: "decrease" })
+                  )
+                }
+              >
+                -
+              </button>
+
+              <span style={{ margin: "0 10px" }}>
+                {item.quantity}
+              </span>
+
+              <button
+                onClick={() =>
+                  dispatch(
+                    updateQuantity({ id: item.id, type: "increase" })
+                  )
+                }
+              >
+                +
+              </button>
+            </div>
+
+            {/* TOTAL PER ITEM */}
+            <p>
+              Total: ₹{item.price * item.quantity}
+            </p>
+
+            {/* DELETE BUTTON */}
+            <button
+              onClick={() => dispatch(removeItem(item.id))}
+              style={{ background: "red", color: "white" }}
+            >
+              Delete
+            </button>
+
+          </div>
+        ))
+      )}
+
+      {/* TOTAL CART AMOUNT (IMPORTANT) */}
+      <h2>
+        Total Amount: ₹{calculateTotalAmount()}
+      </h2>
+
+      {/* BUTTONS */}
+      <button onClick={() => alert("Coming Soon")}>
+        Checkout
+      </button>
 
       <Link to="/products">
         <button>Continue Shopping</button>
       </Link>
+
     </div>
   );
 };
